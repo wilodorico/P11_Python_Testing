@@ -35,7 +35,7 @@ def index():
 def showSummary():
     email = request.form["email"]
     if email == "":
-        flash("Please enter an email")
+        flash("Please enter an email", "error")
         return render_template("index.html")
 
     club = [club for club in clubs if club["email"] == request.form["email"]][0]
