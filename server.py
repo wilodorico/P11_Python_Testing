@@ -1,29 +1,14 @@
-import json
 import os
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
+from json_services import JSONServices
+
 load_dotenv()  # Load environment variables from .env file
-
-
-def loadClubs():
-    with open("clubs.json") as c:
-        listOfClubs = json.load(c)["clubs"]
-        return listOfClubs
-
-
-def loadCompetitions():
-    with open("competitions.json") as comps:
-        listOfCompetitions = json.load(comps)["competitions"]
-        return listOfCompetitions
-
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
-
-competitions = loadCompetitions()
-clubs = loadClubs()
 
 
 @app.route("/")
@@ -37,16 +22,26 @@ def showSummary():
     if email == "":
         flash("Please enter an email", "error")
         return render_template("index.html")
+
     try:
+        clubs = JSONServices.load("clubs.json")["clubs"]
+        competitions = JSONServices.load("competitions.json")["competitions"]
         club = [club for club in clubs if club["email"] == email][0]
+    except FileNotFoundError as ex:
+        print(ex)
+        flash("Error loading data. Please contact support.", "error")
+        return render_template("index.html")
     except IndexError:
         flash("Email not found", "error")
         return render_template("index.html")
+
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
+    clubs = JSONServices.load("clubs.json")["clubs"]
+    competitions = JSONServices.load("competitions.json")["competitions"]
     foundClub = [c for c in clubs if c["name"] == club][0]
     foundCompetition = [c for c in competitions if c["name"] == competition][0]
     if foundClub and foundCompetition:
@@ -58,6 +53,8 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
+    clubs = JSONServices.load("clubs.json")["clubs"]
+    competitions = JSONServices.load("competitions.json")["competitions"]
     competition = [c for c in competitions if c["name"] == request.form["competition"]][0]
     club = [c for c in clubs if c["name"] == request.form["club"]][0]
     placesRequired = int(request.form["places"])
