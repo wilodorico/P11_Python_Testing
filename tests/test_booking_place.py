@@ -1,12 +1,17 @@
 from globals import LIMITED_BOOKING_PLACE
 
 
-def test_club_cannot_book_more_than_points(client, mocker):
-    mock_clubs = {"clubs": [{"email": "clubtest@test.com", "name": "Club Test", "points": "5"}]}
+def get_mock_clubs(points: str):
+    return {"clubs": [{"email": "clubtest@test.com", "name": "Club Test", "points": points}]}
 
-    mock_competitions = {
-        "competitions": [{"name": "Competition Test", "date": "2020-03-27 10:00:00", "numberOfPlaces": "10"}]
-    }
+
+def get_mock_competitions(places: str):
+    return {"competitions": [{"name": "Competition Test", "date": "2020-03-27 10:00:00", "numberOfPlaces": places}]}
+
+
+def test_club_cannot_book_more_than_points(client, mocker):
+    mock_clubs = get_mock_clubs("5")
+    mock_competitions = get_mock_competitions("10")
 
     mocker.patch("server.JSONServices.load", side_effect=[mock_clubs, mock_competitions])
 
@@ -22,13 +27,8 @@ def test_club_cannot_book_more_than_limit(client, mocker):
     places_requested = str(LIMITED_BOOKING_PLACE + 1)
     club_points = str(LIMITED_BOOKING_PLACE + 5)
     number_of_competition_places = str(LIMITED_BOOKING_PLACE + 5)
-    mock_clubs = {"clubs": [{"email": "clubtest@test.com", "name": "Club Test", "points": club_points}]}
-
-    mock_competitions = {
-        "competitions": [
-            {"name": "Competition Test", "date": "2020-03-27 10:00:00", "numberOfPlaces": number_of_competition_places}
-        ]
-    }
+    mock_clubs = get_mock_clubs(club_points)
+    mock_competitions = get_mock_competitions(number_of_competition_places)
 
     mocker.patch("server.JSONServices.load", side_effect=[mock_clubs, mock_competitions])
 
