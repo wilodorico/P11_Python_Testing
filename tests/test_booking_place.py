@@ -1,3 +1,6 @@
+from globals import LIMITED_BOOKING_PLACE
+
+
 def test_club_cannot_book_more_than_points(client, mocker):
     mock_clubs = {"clubs": [{"email": "clubtest@test.com", "name": "Club Test", "points": "5"}]}
 
@@ -13,3 +16,25 @@ def test_club_cannot_book_more_than_points(client, mocker):
 
     assert response.status_code == 200
     assert b"Not enough points" in response.data
+
+
+def test_club_cannot_book_more_than_limit(client, mocker):
+    places_requested = str(LIMITED_BOOKING_PLACE + 1)
+    club_points = str(LIMITED_BOOKING_PLACE + 5)
+    number_of_competition_places = str(LIMITED_BOOKING_PLACE + 5)
+    mock_clubs = {"clubs": [{"email": "clubtest@test.com", "name": "Club Test", "points": club_points}]}
+
+    mock_competitions = {
+        "competitions": [
+            {"name": "Competition Test", "date": "2020-03-27 10:00:00", "numberOfPlaces": number_of_competition_places}
+        ]
+    }
+
+    mocker.patch("server.JSONServices.load", side_effect=[mock_clubs, mock_competitions])
+
+    response = client.post(
+        "/purchasePlaces", data={"competition": "Competition Test", "club": "Club Test", "places": places_requested}
+    )
+
+    assert response.status_code == 200
+    assert f"Maximum booking limit is {LIMITED_BOOKING_PLACE} places".encode() in response.data
