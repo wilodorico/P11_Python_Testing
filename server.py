@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
+from globals import LIMITED_BOOKING_PLACE
 from json_services import JSONServices
 
 load_dotenv()  # Load environment variables from .env file
@@ -63,6 +64,10 @@ def purchasePlaces():
 
     if placesRequired > club_points:
         flash("Not enough points", "error")
+        return render_template("booking.html", club=club, competition=competition)
+
+    if placesRequired > LIMITED_BOOKING_PLACE:
+        flash(f"Maximum booking limit is {LIMITED_BOOKING_PLACE} places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
     competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
