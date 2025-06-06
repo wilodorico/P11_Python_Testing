@@ -70,7 +70,11 @@ def purchasePlaces():
         flash(f"Maximum booking limit is {LIMITED_BOOKING_PLACE} places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
+    number_of_places = int(competition["numberOfPlaces"]) - placesRequired
+
+    competition["numberOfPlaces"] = str(number_of_places)
+    JSONServices.save("competitions.json", {"competitions": competitions})
+
     flash("Great-booking complete!")
     return render_template("welcome.html", club=club, competitions=competitions)
 

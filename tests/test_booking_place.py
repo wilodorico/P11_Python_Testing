@@ -38,3 +38,26 @@ def test_club_cannot_book_more_than_limit(client, mocker):
 
     assert response.status_code == 200
     assert f"Maximum booking limit is {LIMITED_BOOKING_PLACE} places".encode() in response.data
+
+
+def test_competition_places_are_deducted_when_club_books(client, mocker):
+    mock_clubs = get_mock_clubs(points="15")
+    mock_competitions = get_mock_competitions(places="20")
+    places_requested = "5"
+
+    mocker.patch("server.JSONServices.load", side_effect=[mock_clubs, mock_competitions])
+    mocker.patch("json_services.open", mocker.mock_open())
+
+    mock_json_dump = mocker.patch("json.dump")
+
+    response = client.post(
+        "/purchasePlaces", data={"competition": "Competition Test", "club": "Club Test", "places": places_requested}
+    )
+
+    assert response.status_code == 200
+
+    called_data = mock_json_dump.call_args[0][0]
+    competitions = called_data["competitions"]
+
+    updated = next(c for c in competitions if c["name"] == "Competition Test")
+    assert updated["numberOfPlaces"] == "15"
