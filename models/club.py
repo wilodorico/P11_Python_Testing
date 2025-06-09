@@ -8,5 +8,9 @@ class Club:
         self._email = email
         self._points = points
 
+    def has_enough_points(self, points: int) -> bool:
+        """Check if the club has enough points."""
+        return self._points >= points
+
     def __str__(self) -> str:
         return f"Club(id={self._id}, name={self._name}, email={self._email}, points={self._points})"
