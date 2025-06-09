@@ -3,8 +3,9 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from globals import LIMITED_BOOKING_PLACE
 from json_services import JSONServices
+from models.club import Club
+from models.competition import Competition
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -54,25 +55,31 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
-    clubs = JSONServices.load("clubs.json")["clubs"]
-    competitions = JSONServices.load("competitions.json")["competitions"]
-    competition = [c for c in competitions if c["name"] == request.form["competition"]][0]
-    club = [c for c in clubs if c["name"] == request.form["club"]][0]
+    clubs_data = JSONServices.load("clubs.json")["clubs"]
+    competitions_data = JSONServices.load("competitions.json")["competitions"]
+    print("clubs_data:", clubs_data)
+    print("competitions_data:", competitions_data)
+    clubs = [Club.deserialize(c) for c in clubs_data]
+    competitions = [Competition.deserialize(c) for c in competitions_data]
+    club = next((c for c in clubs if c.name == request.form["club"]), None)
+    competition = next((c for c in competitions if c.name == request.form["competition"]), None)
     placesRequired = int(request.form["places"])
 
-    club_points = int(club["points"])
+    print("club:", club)
+    print("competition:", competition)
 
-    if placesRequired > club_points:
+    if not club.has_enough_points(placesRequired):
         flash("Not enough points", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    if placesRequired > LIMITED_BOOKING_PLACE:
-        flash(f"Maximum booking limit is {LIMITED_BOOKING_PLACE} places", "error")
+    if not competition.is_within_reservation_limit(placesRequired):
+        flash(f"Maximum booking limit is {competition.max_places_per_reservation} places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    number_of_places = int(competition["numberOfPlaces"]) - placesRequired
+    competition.reserve_places(placesRequired)
 
-    competition["numberOfPlaces"] = str(number_of_places)
+    competitions = [c.serialize() for c in competitions]
+
     JSONServices.save("competitions.json", {"competitions": competitions})
 
     flash("Great-booking complete!")
