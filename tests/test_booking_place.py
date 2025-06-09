@@ -6,7 +6,7 @@ def get_mock_clubs(points: str):
 
 
 def get_mock_competitions(places: str):
-    return {"competitions": [{"name": "Competition Test", "date": "2020-03-27 10:00:00", "numberOfPlaces": places}]}
+    return {"competitions": [{"name": "Competition Test", "date": "2020-03-27 10:00:00", "available_places": places}]}
 
 
 def test_club_cannot_book_more_than_points(client, mocker):
@@ -60,4 +60,4 @@ def test_competition_places_are_deducted_when_club_books(client, mocker):
     competitions = called_data["competitions"]
 
     updated = next(c for c in competitions if c["name"] == "Competition Test")
-    assert updated["numberOfPlaces"] == "15"
+    assert updated["available_places"] == "15"
