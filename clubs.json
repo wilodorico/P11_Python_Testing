@@ -1,15 +1,19 @@
 {"clubs":[
     {
+        "id": "25e97c3f-844b-4200-a3cb-7f0a09c0f623",
         "name":"Simply Lift",
         "email":"john@simplylift.co",
         "points":"13"
     },
     {
+        "id": "d5c2bc91-2171-40ef-a9bc-49af8e6518c9",
         "name":"Iron Temple",
         "email": "admin@irontemple.com",
         "points":"4"
     },
-    {   "name":"She Lifts",
+    { 
+        "id": "006a09e0-9325-471c-970b-6fb81c3146d4",
+        "name":"She Lifts",
         "email": "kate@shelifts.co.uk",
         "points":"12"
     }
