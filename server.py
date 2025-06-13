@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -6,6 +7,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 from json_services import JSONServices
 from models.club import Club
 from models.competition import Competition
+from models.reservation import Reservation
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -57,16 +59,14 @@ def book(competition, club):
 def purchasePlaces():
     clubs_data = JSONServices.load("clubs.json")["clubs"]
     competitions_data = JSONServices.load("competitions.json")["competitions"]
-    print("clubs_data:", clubs_data)
-    print("competitions_data:", competitions_data)
+    reservations_data = JSONServices.load("reservations.json")["reservations"]
+
     clubs = [Club.deserialize(c) for c in clubs_data]
     competitions = [Competition.deserialize(c) for c in competitions_data]
+    reservations = [Reservation.deserialize(r) for r in reservations_data]
     club = next((c for c in clubs if c.name == request.form["club"]), None)
     competition = next((c for c in competitions if c.name == request.form["competition"]), None)
     placesRequired = int(request.form["places"])
-
-    print("club:", club)
-    print("competition:", competition)
 
     if not club.has_enough_points(placesRequired):
         flash("Not enough points", "error")
@@ -76,11 +76,17 @@ def purchasePlaces():
         flash(f"Maximum booking limit is {competition.max_places_per_reservation} places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    competition.reserve_places(placesRequired)
+    reservation = club.reserve(competition, placesRequired, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
+    reservations.append(reservation)
+
+    clubs = [c.serialize() for c in clubs]
     competitions = [c.serialize() for c in competitions]
+    reservations = [r.serialize() for r in reservations]
 
+    JSONServices.save("clubs.json", {"clubs": clubs})
     JSONServices.save("competitions.json", {"competitions": competitions})
+    JSONServices.save("reservations.json", {"reservations": reservations})
 
     flash("Great-booking complete!")
     return render_template("welcome.html", club=club, competitions=competitions)
