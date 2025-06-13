@@ -13,6 +13,10 @@ load_dotenv()  # Load environment variables from .env file
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 
+reservations = ReservationJsonRepository("reservations.json")
+clubs = ClubJsonRepository("clubs.json")
+competitions = CompetitionJsonRepository("competitions.json")
+
 
 @app.route("/")
 def index():
@@ -27,8 +31,6 @@ def show_summary():
         return render_template("index.html")
 
     try:
-        clubs = ClubJsonRepository("clubs.json")
-        competitions = CompetitionJsonRepository("competitions.json")
         club = clubs.find_by_email(email)
     except FileNotFoundError as ex:
         print(ex)
@@ -43,9 +45,6 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-    clubs = ClubJsonRepository("clubs.json")
-    competitions = CompetitionJsonRepository("competitions.json")
-
     found_club = clubs.find_by_name(club)
     found_competition = competitions.find_by_name(competition)
 
@@ -58,10 +57,6 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
-    reservations = ReservationJsonRepository("reservations.json")
-    clubs = ClubJsonRepository("clubs.json")
-    competitions = CompetitionJsonRepository("competitions.json")
-
     club = clubs.find_by_name(request.form["club"])
     competition = competitions.find_by_name(request.form["competition"])
     places_required = int(request.form["places"])
