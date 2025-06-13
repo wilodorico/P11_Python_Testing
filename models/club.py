@@ -12,6 +12,15 @@ class Club:
         """Check if the club has enough points."""
         return self._points >= points
 
+    def consume_points(self, points: int) -> None:
+        """Consume points from the club."""
+        if not self.has_enough_points(points):
+            raise ValueError("Not enough points to consume.")
+        self._points -= points
+
+    def reserve(self, competition, places, date):
+        return competition.reserve_places(self, places, date)
+
     @property
     def name(self) -> str:
         """Get the name of the club."""

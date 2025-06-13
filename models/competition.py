@@ -1,5 +1,7 @@
 import uuid
 
+from models.reservation import Reservation
+
 
 class Competition:
     MAX_PLACES_PER_RESERVATION = 12
@@ -21,12 +23,16 @@ class Competition:
         """Check if the reservation does not exceed the maximum places per reservation."""
         return places <= self._max_places_per_reservation
 
-    def reserve_places(self, places: int) -> None:
-        """Reserve places for the competition."""
-        if self.can_reserve(places):
-            self._available_places -= places
-        else:
+    def reserve_places(self, club, places, date):
+        if not self.can_reserve(places):
             raise ValueError("Not enough available places to reserve.")
+        if not club.has_enough_points(places):
+            raise ValueError("Not enough points to reserve places.")
+
+        club.consume_points(places)
+        self._available_places -= places
+
+        return Reservation(club._id, self._id, places, date)
 
     @property
     def name(self) -> str:
