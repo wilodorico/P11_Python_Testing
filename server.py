@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
 from json_services import JSONServices
-from models.club import Club
 from models.competition import Competition
+from repositories.club_json_repository import ClubJsonRepository
 from repositories.reservation_json_repository import ReservationJsonRepository
 
 load_dotenv()  # Load environment variables from .env file
@@ -57,15 +57,13 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
-    clubs_data = JSONServices.load("clubs.json")["clubs"]
     competitions_data = JSONServices.load("competitions.json")["competitions"]
-
-    clubs = [Club.deserialize(c) for c in clubs_data]
     competitions = [Competition.deserialize(c) for c in competitions_data]
 
     reservations = ReservationJsonRepository("reservations.json")
+    clubs = ClubJsonRepository("clubs.json")
+    club = clubs.find_by_name(request.form["club"])
 
-    club = next((c for c in clubs if c.name == request.form["club"]), None)
     competition = next((c for c in competitions if c.name == request.form["competition"]), None)
     placesRequired = int(request.form["places"])
 
@@ -85,11 +83,10 @@ def purchasePlaces():
 
     reservations.add(new_reservation)
     reservations.save()
+    clubs.save()
 
-    clubs = [c.serialize() for c in clubs]
     competitions = [c.serialize() for c in competitions]
 
-    JSONServices.save("clubs.json", {"clubs": clubs})
     JSONServices.save("competitions.json", {"competitions": competitions})
 
     flash("Great-booking complete!")
