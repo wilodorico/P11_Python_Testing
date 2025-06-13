@@ -4,7 +4,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from json_services import JSONServices
 from repositories.club_json_repository import ClubJsonRepository
 from repositories.competition_json_repository import CompetitionJsonRepository
 from repositories.reservation_json_repository import ReservationJsonRepository
@@ -21,7 +20,7 @@ def index():
 
 
 @app.route("/showSummary", methods=["POST"])
-def showSummary():
+def show_summary():
     email = request.form["email"]
     if email == "":
         flash("Please enter an email", "error")
@@ -44,40 +43,42 @@ def showSummary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-    clubs = JSONServices.load("clubs.json")["clubs"]
-    competitions = JSONServices.load("competitions.json")["competitions"]
-    foundClub = [c for c in clubs if c["name"] == club][0]
-    foundCompetition = [c for c in competitions if c["name"] == competition][0]
-    if foundClub and foundCompetition:
-        return render_template("booking.html", club=foundClub, competition=foundCompetition)
+    clubs = ClubJsonRepository("clubs.json")
+    competitions = CompetitionJsonRepository("competitions.json")
+
+    found_club = clubs.find_by_name(club)
+    found_competition = competitions.find_by_name(competition)
+
+    if found_club and found_competition:
+        return render_template("booking.html", club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
         return render_template("welcome.html", club=club, competitions=competitions)
 
 
 @app.route("/purchasePlaces", methods=["POST"])
-def purchasePlaces():
+def purchase_places():
     reservations = ReservationJsonRepository("reservations.json")
     clubs = ClubJsonRepository("clubs.json")
     competitions = CompetitionJsonRepository("competitions.json")
 
     club = clubs.find_by_name(request.form["club"])
     competition = competitions.find_by_name(request.form["competition"])
-    placesRequired = int(request.form["places"])
+    places_required = int(request.form["places"])
 
-    if not club.has_enough_points(placesRequired):
+    if not club.has_enough_points(places_required):
         flash("Not enough points", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    if not competition.is_within_reservation_limit(placesRequired):
+    if not competition.is_within_reservation_limit(places_required):
         flash(f"Maximum booking limit is {competition.max_places_per_reservation} places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    if not competition.can_reserve(placesRequired):
+    if not competition.can_reserve(places_required):
         flash("Not enough available places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
-    new_reservation = club.reserve(competition, placesRequired, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    new_reservation = club.reserve(competition, places_required, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     reservations.add(new_reservation)
     reservations.save()
