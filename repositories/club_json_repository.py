@@ -22,6 +22,9 @@ class ClubJsonRepository:
     def find_by_name(self, name: str):
         return next((club for club in self._clubs if club.name == name), None)
 
+    def find_by_email(self, email: str):
+        return next((club for club in self._clubs if club.email == email), None)
+
     def save(self):
         serialized_data = [club.serialize() for club in self._clubs]
         JSONServices.save(self.file_path, {"clubs": serialized_data})
