@@ -76,6 +76,10 @@ def purchasePlaces():
         flash(f"Maximum booking limit is {competition.max_places_per_reservation} places", "error")
         return render_template("booking.html", club=club, competition=competition)
 
+    if not competition.can_reserve(placesRequired):
+        flash("Not enough available places", "error")
+        return render_template("booking.html", club=club, competition=competition)
+
     reservation = club.reserve(competition, placesRequired, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     reservations.append(reservation)
