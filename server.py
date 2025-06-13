@@ -28,9 +28,9 @@ def showSummary():
         return render_template("index.html")
 
     try:
-        clubs = JSONServices.load("clubs.json")["clubs"]
-        competitions = JSONServices.load("competitions.json")["competitions"]
-        club = [club for club in clubs if club["email"] == email][0]
+        clubs = ClubJsonRepository("clubs.json")
+        competitions = CompetitionJsonRepository("competitions.json")
+        club = clubs.find_by_email(email)
     except FileNotFoundError as ex:
         print(ex)
         flash("Error loading data. Please contact support.", "error")
