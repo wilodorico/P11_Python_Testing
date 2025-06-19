@@ -2,29 +2,30 @@ import os
 
 from json_services import JSONServices
 from models.club import Club
+from repository_protocols.club_repository import ClubRepository
 
 
-class ClubJsonRepository:
-    def __init__(self, file_path):
+class ClubJsonRepository(ClubRepository):
+    def __init__(self, file_path: str):
         self.file_path = file_path
-        self._clubs = self._load()
+        self._clubs: list[Club] = self._load()
 
-    def _load(self):
+    def _load(self) -> list[Club]:
         if not os.path.exists(self.file_path):
             return []
 
         data = JSONServices.load(self.file_path).get("clubs", [])
         return [Club.deserialize(club) for club in data]
 
-    def all(self):
+    def all(self) -> list[Club]:
         return self._clubs
 
-    def find_by_name(self, name: str):
+    def find_by_name(self, name: str) -> Club | None:
         return next((club for club in self._clubs if club.name == name), None)
 
-    def find_by_email(self, email: str):
+    def find_by_email(self, email: str) -> Club | None:
         return next((club for club in self._clubs if club.email == email), None)
 
-    def save(self):
+    def save(self) -> None:
         serialized_data = [club.serialize() for club in self._clubs]
         JSONServices.save(self.file_path, {"clubs": serialized_data})

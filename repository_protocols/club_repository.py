@@ -1,0 +1,13 @@
+from typing import Protocol
+
+from models.club import Club
+
+
+class ClubRepository(Protocol):
+    def all(self) -> list[Club]: ...
+
+    def find_by_name(self, name: str) -> Club | None: ...
+
+    def find_by_email(self, email: str) -> Club | None: ...
+
+    def save(self) -> None: ...
