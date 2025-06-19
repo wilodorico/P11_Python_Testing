@@ -61,6 +61,10 @@ def purchase_places():
     competition = competitions.find_by_name(request.form["competition"])
     places_required = int(request.form["places"])
 
+    if places_required <= 0:
+        flash("Number of places must be greater than 0", "error")
+        return render_template("booking.html", club=club, competition=competition)
+
     if not club.has_enough_points(places_required):
         flash("Not enough points", "error")
         return render_template("booking.html", club=club, competition=competition)
@@ -80,7 +84,7 @@ def purchase_places():
     clubs.save()
     competitions.save()
 
-    flash("Great-booking complete!")
+    flash(f"{places_required} place(s) successfully reserved for {competition.name}!", "success")
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
