@@ -2,26 +2,27 @@ import os
 
 from json_services import JSONServices
 from models.competition import Competition
+from repository_protocols.competition_repository import CompetitionRepository
 
 
-class CompetitionJsonRepository:
-    def __init__(self, file_path):
+class CompetitionJsonRepository(CompetitionRepository):
+    def __init__(self, file_path: str):
         self.file_path = file_path
-        self._competitions = self._load()
+        self._competitions: list[Competition] = self._load()
 
-    def _load(self):
+    def _load(self) -> list[Competition]:
         if not os.path.exists(self.file_path):
             return []
 
         data = JSONServices.load(self.file_path).get("competitions", [])
         return [Competition.deserialize(competition) for competition in data]
 
-    def all(self):
+    def all(self) -> list[Competition]:
         return self._competitions
 
-    def find_by_name(self, name: str):
+    def find_by_name(self, name: str) -> Competition | None:
         return next((competition for competition in self._competitions if competition.name == name), None)
 
-    def save(self):
+    def save(self) -> None:
         serialized_data = [competition.serialize() for competition in self._competitions]
         JSONServices.save(self.file_path, {"competitions": serialized_data})
