@@ -32,18 +32,14 @@ def index():
 def show_summary():
     clubs.reload()
     competitions.reload()
+
     email = request.form["email"]
     if email == "":
         flash("Please enter an email", "error")
         return render_template("index.html")
 
-    try:
-        club = clubs.find_by_email(email)
-    except FileNotFoundError as ex:
-        print(ex)
-        flash("Error loading data. Please contact support.", "error")
-        return render_template("index.html")
-    except IndexError:
+    club = clubs.find_by_email(email)
+    if not club:
         flash("Email not found", "error")
         return render_template("index.html")
 
