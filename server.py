@@ -7,6 +7,7 @@ from flask import Flask, flash, redirect, render_template, request, url_for
 from repositories.club_json_repository import ClubJsonRepository
 from repositories.competition_json_repository import CompetitionJsonRepository
 from repositories.reservation_json_repository import ReservationJsonRepository
+from usecases.reservation_place import ReservePlaceUseCase
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -16,6 +17,10 @@ app.secret_key = os.getenv("SECRET_KEY")
 reservations = ReservationJsonRepository("reservations.json")
 clubs = ClubJsonRepository("clubs.json")
 competitions = CompetitionJsonRepository("competitions.json")
+
+reserve_place_use_case = ReservePlaceUseCase(
+    club_repository=clubs, competition_repository=competitions, reservation_repository=reservations
+)
 
 
 @app.route("/")
@@ -57,34 +62,24 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
-    club = clubs.find_by_name(request.form["club"])
-    competition = competitions.find_by_name(request.form["competition"])
+    club_name = request.form["club"]
+    competition_name = request.form["competition"]
     places_required = int(request.form["places"])
+    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    if places_required <= 0:
-        flash("Number of places must be greater than 0", "error")
+    try:
+        reservation = reserve_place_use_case.execute(
+            club_name=club_name, competition_name=competition_name, places=places_required, date=date
+        )
+        flash(f"{places_required} place(s) successfully reserved for {competition_name}!", "success")
+
+    except ValueError as e:
+        flash(str(e), "error")
+        club = clubs.find_by_name(club_name)
+        competition = competitions.find_by_name(competition_name)
         return render_template("booking.html", club=club, competition=competition)
 
-    if not club.has_enough_points(places_required):
-        flash("Not enough points", "error")
-        return render_template("booking.html", club=club, competition=competition)
-
-    if not competition.is_within_reservation_limit(places_required):
-        flash(f"Maximum booking limit is {competition.max_places_per_reservation} places", "error")
-        return render_template("booking.html", club=club, competition=competition)
-
-    if not competition.can_reserve(places_required):
-        flash("Not enough available places", "error")
-        return render_template("booking.html", club=club, competition=competition)
-
-    new_reservation = club.reserve(competition, places_required, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-    reservations.add(new_reservation)
-    reservations.save()
-    clubs.save()
-    competitions.save()
-
-    flash(f"{places_required} place(s) successfully reserved for {competition.name}!", "success")
+    club = clubs.find_by_name(club_name)
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
