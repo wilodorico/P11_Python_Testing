@@ -32,7 +32,7 @@ class Competition:
         club.consume_points(places)
         self._available_places -= places
 
-        return Reservation(club._id, self._id, places, date)
+        return Reservation(club.id, self._id, places, date)
 
     @property
     def name(self) -> str:
