@@ -17,6 +17,10 @@ class CompetitionJsonRepository(CompetitionRepository):
         data = JSONServices.load(self.file_path).get("competitions", [])
         return [Competition.deserialize(competition) for competition in data]
 
+    def reload(self) -> None:
+        """Reload the competitions from the JSON file."""
+        self._competitions = self._load()
+
     def all(self) -> list[Competition]:
         return self._competitions
 

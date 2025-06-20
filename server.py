@@ -30,6 +30,8 @@ def index():
 
 @app.route("/showSummary", methods=["POST"])
 def show_summary():
+    clubs.reload()
+    competitions.reload()
     email = request.form["email"]
     if email == "":
         flash("Please enter an email", "error")
@@ -50,6 +52,8 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
+    clubs.reload()
+    competitions.reload()
     found_club = clubs.find_by_name(club)
     found_competition = competitions.find_by_name(competition)
 

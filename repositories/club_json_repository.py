@@ -17,6 +17,10 @@ class ClubJsonRepository(ClubRepository):
         data = JSONServices.load(self.file_path).get("clubs", [])
         return [Club.deserialize(club) for club in data]
 
+    def reload(self) -> None:
+        """Reload the clubs from the JSON file."""
+        self._clubs = self._load()
+
     def all(self) -> list[Club]:
         return self._clubs
 
