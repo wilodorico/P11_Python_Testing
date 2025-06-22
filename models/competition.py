@@ -35,6 +35,11 @@ class Competition:
         return Reservation(club.id, self._id, places, date)
 
     @property
+    def id(self) -> str:
+        """Get the ID of the competition."""
+        return self._id
+
+    @property
     def name(self) -> str:
         """Get the name of the competition."""
         return self._name

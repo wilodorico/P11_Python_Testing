@@ -9,6 +9,26 @@ class Reservation:
         self._reserved_places = reserved_places
         self._date = date
 
+    @property
+    def club_id(self) -> str:
+        """Get the ID of the club."""
+        return self._club_id
+
+    @property
+    def competition_id(self) -> str:
+        """Get the ID of the competition."""
+        return self._competition_id
+
+    @property
+    def reserved_places(self) -> int:
+        """Get the number of reserved places."""
+        return self._reserved_places
+
+    @property
+    def date(self) -> str:
+        """Get the date of the reservation."""
+        return self._date
+
     @classmethod
     def deserialize(cls, data: dict):
         """Deserialize data into the Reservation object."""

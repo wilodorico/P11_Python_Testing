@@ -36,6 +36,11 @@ class Club:
         """Get the email of the club."""
         return self._email
 
+    @property
+    def points(self) -> int:
+        """Get the points of the club."""
+        return self._points
+
     @classmethod
     def deserialize(cls, data: dict):
         """Deserialize data into the Club object."""
