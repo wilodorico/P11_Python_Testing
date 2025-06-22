@@ -1,5 +1,7 @@
 import datetime
 
+import pytest
+
 from models.club import Club
 from models.competition import Competition
 from tests.repositories.in_memory_club_repository import InMemoryClubRepository
@@ -31,3 +33,18 @@ def test_successful_reserve_place():
     assert reservation.reserved_places == 5
     assert reservation.date == date_now
     assert reservation.date == date_now
+
+
+def test_reserve_place_with_club_not_found_raises_error():
+    competition = Competition(name="Test Competition", date="2023-10-01 10:00:00", available_places=20)
+    club_repo = InMemoryClubRepository([])
+    competition_repo = InMemoryCompetitionRepository([competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+    date_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with pytest.raises(ValueError, match="Club 'Unknown Club' not found."):
+        use_case.execute(club_name="Unknown Club", competition_name="Test Competition", places=5, date=date_now)
