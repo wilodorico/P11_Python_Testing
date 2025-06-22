@@ -18,12 +18,12 @@ class ReservePlaceUseCase:
         club = self._club_repository.find_by_name(club_name)
 
         if not club:
-            raise ValueError(f"Club '{club_name}' not found.")
+            raise ValueError("Club not found.")
 
         competition = self._competition_repository.find_by_name(competition_name)
 
         if not competition:
-            raise ValueError(f"Competition '{competition_name}' not found.")
+            raise ValueError("Competition not found.")
 
         if places <= 0:
             raise ValueError("Number of places must be greater than zero.")

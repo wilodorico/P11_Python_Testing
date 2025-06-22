@@ -46,5 +46,20 @@ def test_reserve_place_with_club_not_found_raises_error():
     )
     date_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    with pytest.raises(ValueError, match="Club 'Unknown Club' not found."):
+    with pytest.raises(ValueError, match="Club not found."):
         use_case.execute(club_name="Unknown Club", competition_name="Test Competition", places=5, date=date_now)
+
+
+def test_reserve_place_with_competition_not_found_raises_error():
+    club = Club(name="Test Club", email="test@club.com", points=20)
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+    date_now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with pytest.raises(ValueError, match="Competition not found."):
+        use_case.execute(club_name="Test Club", competition_name="Unknown Competition", places=5, date=date_now)
