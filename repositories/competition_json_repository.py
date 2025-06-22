@@ -27,6 +27,10 @@ class CompetitionJsonRepository(CompetitionRepository):
     def find_by_name(self, name: str) -> Competition | None:
         return next((competition for competition in self._competitions if competition.name == name), None)
 
-    def save(self) -> None:
+    def update(self, competition: Competition) -> None:
+        for i, existing_competition in enumerate(self._competitions):
+            if existing_competition.name == competition.name:
+                self._competitions[i] = competition
+                break
         serialized_data = [competition.serialize() for competition in self._competitions]
         JSONServices.save(self.file_path, {"competitions": serialized_data})

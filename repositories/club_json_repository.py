@@ -30,6 +30,10 @@ class ClubJsonRepository(ClubRepository):
     def find_by_email(self, email: str) -> Club | None:
         return next((club for club in self._clubs if club.email == email), None)
 
-    def save(self) -> None:
+    def update(self, club: Club) -> None:
+        for i, existing_club in enumerate(self._clubs):
+            if existing_club.name == club.name:
+                self._clubs[i] = club
+                break
         serialized_data = [club.serialize() for club in self._clubs]
         JSONServices.save(self.file_path, {"clubs": serialized_data})

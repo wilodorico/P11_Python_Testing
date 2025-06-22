@@ -17,12 +17,13 @@ class ReservationJsonRepository(ReservationRepository):
         data = JSONServices.load(self.file_path).get("reservations", [])
         return [Reservation.deserialize(reservation) for reservation in data]
 
+    def _add(self, reservation: Reservation) -> None:
+        self._reservations.append(reservation)
+
     def all(self) -> list[Reservation]:
         return self._reservations
 
-    def add(self, reservation: Reservation) -> None:
-        self._reservations.append(reservation)
-
-    def save(self) -> None:
+    def save(self, reservation: Reservation) -> None:
+        self._add(reservation)
         serialized_data = [reservation.serialize() for reservation in self._reservations]
         JSONServices.save(self.file_path, {"reservations": serialized_data})
