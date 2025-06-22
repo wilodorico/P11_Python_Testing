@@ -71,3 +71,29 @@ def test_reserve_place_with_competition_not_found_raises_error(club, date_now):
     with pytest.raises(ValueError, match="Competition not found."):
         use_case.execute(club_name="Test Club", competition_name="Unknown Competition", places=5, date=date_now)
         use_case.execute(club_name="Test Club", competition_name="Unknown Competition", places=5, date=date_now)
+
+
+def test_reserve_place_with_zero_places_raises_error(club, competition, date_now):
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+
+    with pytest.raises(ValueError, match="Number of places must be greater than zero."):
+        use_case.execute(club_name="Test Club", competition_name="Test Competition", places=0, date=date_now)
+
+
+def test_reserve_place_with_negative_places_raises_error(club, competition, date_now):
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+
+    with pytest.raises(ValueError, match="Number of places must be greater than zero."):
+        use_case.execute(club_name="Test Club", competition_name="Test Competition", places=-5, date=date_now)
