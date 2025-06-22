@@ -47,4 +47,3 @@ class ReservePlaceUseCase:
         self._reservation_repository.save(reservation)
         self._club_repository.update(club)
         self._competition_repository.update(competition)
-        self._competition_repository.update(competition)
