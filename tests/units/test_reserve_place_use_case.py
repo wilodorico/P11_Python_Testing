@@ -16,18 +16,19 @@ def club():
 
 
 @pytest.fixture
-def competition():
-    return Competition(name="Test Competition", date="2023-10-01 10:00:00", available_places=20)
+def future_competition():
+    future_date = datetime.datetime.now() + datetime.timedelta(days=15)
+    return Competition(name="Test Competition", date=future_date, available_places=20)
 
 
 @pytest.fixture
 def date_now():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.now()
 
 
-def test_successful_reserve_place(club, competition, date_now):
+def test_successful_reserve_place(club, future_competition, date_now):
     club_repo = InMemoryClubRepository([club])
-    competition_repo = InMemoryCompetitionRepository([competition])
+    competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
     use_case = ReservePlaceUseCase(
@@ -36,19 +37,35 @@ def test_successful_reserve_place(club, competition, date_now):
     use_case.execute(club_name="Test Club", competition_name="Test Competition", places=5, date=date_now)
 
     assert club.points == 15
-    assert competition.available_places == 15
+    assert future_competition.available_places == 15
     assert len(reservation_repo.all()) == 1
     reservation = reservation_repo.all()[0]
     assert reservation.club_id == club.id
-    assert reservation.competition_id == competition.id
+    assert reservation.competition_id == future_competition.id
     assert reservation.reserved_places == 5
     assert reservation.date == date_now
     assert reservation.date == date_now
 
 
-def test_reserve_place_with_club_not_found_raises_error(competition, date_now):
+def test_reserve_place_with_past_competition_raises_error(club, date_now):
+    past_date = datetime.datetime.now() - datetime.timedelta(days=15)
+    past_competition = Competition(name="Past Competition", date=past_date, available_places=20)
+
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([past_competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+
+    with pytest.raises(ValueError, match="Cannot reserve places for a past competition."):
+        use_case.execute(club_name="Test Club", competition_name="Past Competition", places=5, date=date_now)
+
+
+def test_reserve_place_with_club_not_found_raises_error(future_competition, date_now):
     club_repo = InMemoryClubRepository([])
-    competition_repo = InMemoryCompetitionRepository([competition])
+    competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
     use_case = ReservePlaceUseCase(
@@ -70,12 +87,11 @@ def test_reserve_place_with_competition_not_found_raises_error(club, date_now):
 
     with pytest.raises(ValueError, match="Competition not found."):
         use_case.execute(club_name="Test Club", competition_name="Unknown Competition", places=5, date=date_now)
-        use_case.execute(club_name="Test Club", competition_name="Unknown Competition", places=5, date=date_now)
 
 
-def test_reserve_place_with_zero_places_raises_error(club, competition, date_now):
+def test_reserve_place_with_zero_places_raises_error(club, future_competition, date_now):
     club_repo = InMemoryClubRepository([club])
-    competition_repo = InMemoryCompetitionRepository([competition])
+    competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
     use_case = ReservePlaceUseCase(
@@ -86,9 +102,9 @@ def test_reserve_place_with_zero_places_raises_error(club, competition, date_now
         use_case.execute(club_name="Test Club", competition_name="Test Competition", places=0, date=date_now)
 
 
-def test_reserve_place_with_negative_places_raises_error(club, competition, date_now):
+def test_reserve_place_with_negative_places_raises_error(club, future_competition, date_now):
     club_repo = InMemoryClubRepository([club])
-    competition_repo = InMemoryCompetitionRepository([competition])
+    competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
     use_case = ReservePlaceUseCase(
@@ -99,9 +115,9 @@ def test_reserve_place_with_negative_places_raises_error(club, competition, date
         use_case.execute(club_name="Test Club", competition_name="Test Competition", places=-5, date=date_now)
 
 
-def test_reserve_place_with_insufficient_points_raises_error(club, competition, date_now):
+def test_reserve_place_with_insufficient_points_raises_error(club, future_competition, date_now):
     club_repo = InMemoryClubRepository([club])
-    competition_repo = InMemoryCompetitionRepository([competition])
+    competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
     use_case = ReservePlaceUseCase(
@@ -112,18 +128,20 @@ def test_reserve_place_with_insufficient_points_raises_error(club, competition, 
         use_case.execute(club_name="Test Club", competition_name="Test Competition", places=25, date=date_now)
 
 
-def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(club, competition, date_now):
+def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(club, future_competition, date_now):
     club_repo = InMemoryClubRepository([club])
-    competition_repo = InMemoryCompetitionRepository([competition])
+    competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
     use_case = ReservePlaceUseCase(
         club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
     )
 
-    exceeding_max_places_per_reservation = competition.max_places_per_reservation + 1
+    exceeding_max_places_per_reservation = future_competition.max_places_per_reservation + 1
 
-    with pytest.raises(ValueError, match=f"Maximum booking limit is {competition.max_places_per_reservation} places."):
+    with pytest.raises(
+        ValueError, match=f"Maximum booking limit is {future_competition.max_places_per_reservation} places."
+    ):
         use_case.execute(
             club_name="Test Club",
             competition_name="Test Competition",
@@ -133,7 +151,8 @@ def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(cl
 
 
 def test_reserve_place_with_not_enough_available_places_raises_error(club, date_now):
-    competition = Competition(name="Test Competition", date="2023-10-01 10:00:00", available_places=10)
+    future_date = (datetime.datetime.now() + datetime.timedelta(days=15)).strftime("%Y-%m-%d %H:%M:%S")
+    competition = Competition(name="Test Competition", date=future_date, available_places=10)
     club_repo = InMemoryClubRepository([club])
     competition_repo = InMemoryCompetitionRepository([competition])
     reservation_repo = InMemoryReservationRepository()

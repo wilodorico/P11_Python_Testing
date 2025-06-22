@@ -65,7 +65,7 @@ def purchase_places():
     club_name = request.form["club"]
     competition_name = request.form["competition"]
     places_required = int(request.form["places"])
-    date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date = datetime.now()
 
     try:
         reserve_place_use_case.execute(

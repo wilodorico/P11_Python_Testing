@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from models.reservation import Reservation
 
@@ -7,7 +8,11 @@ class Competition:
     MAX_PLACES_PER_RESERVATION = 12
 
     def __init__(
-        self, name: str, date: str, available_places: int, max_places_per_reservation: int = MAX_PLACES_PER_RESERVATION
+        self,
+        name: str,
+        date: datetime,
+        available_places: int,
+        max_places_per_reservation: int = MAX_PLACES_PER_RESERVATION,
     ):
         self._id = str(uuid.uuid4())
         self._name = name
@@ -45,6 +50,11 @@ class Competition:
         return self._name
 
     @property
+    def date(self) -> datetime:
+        """Get the date of the competition."""
+        return self._date
+
+    @property
     def available_places(self) -> int:
         """Get the number of available places."""
         return self._available_places
@@ -59,7 +69,7 @@ class Competition:
         """Deserialize data into the Competition object."""
         competition = cls(
             name=data.get("name"),
-            date=data.get("date"),
+            date=datetime.strptime(data.get("date"), "%Y-%m-%d %H:%M:%S"),
             available_places=int(data.get("available_places")),
         )
         competition._id = data.get("id")
@@ -70,7 +80,7 @@ class Competition:
         return {
             "id": self._id,
             "name": self._name,
-            "date": self._date,
+            "date": self._date.strftime("%Y-%m-%d %H:%M:%S"),
             "available_places": str(self._available_places),
         }
 

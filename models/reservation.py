@@ -1,8 +1,9 @@
 import uuid
+from datetime import datetime
 
 
 class Reservation:
-    def __init__(self, club_id: str, competition_id: str, reserved_places: int, date: str):
+    def __init__(self, club_id: str, competition_id: str, reserved_places: int, date: datetime):
         self._id = str(uuid.uuid4())
         self._club_id = club_id
         self._competition_id = competition_id
@@ -25,7 +26,7 @@ class Reservation:
         return self._reserved_places
 
     @property
-    def date(self) -> str:
+    def date(self) -> datetime:
         """Get the date of the reservation."""
         return self._date
 
@@ -36,7 +37,7 @@ class Reservation:
             club_id=data.get("club_id"),
             competition_id=data.get("competition_id"),
             reserved_places=int(data.get("reserved_places")),
-            date=data.get("date"),
+            date=datetime.strptime(data.get("date"), "%Y-%m-%d %H:%M:%S"),
         )
         reservation._id = data.get("id")
         return reservation
@@ -48,7 +49,7 @@ class Reservation:
             "club_id": self._club_id,
             "competition_id": self._competition_id,
             "reserved_places": str(self._reserved_places),
-            "date": self._date,
+            "date": self._date.strftime("%Y-%m-%d %H:%M:%S"),
         }
 
     def __str__(self) -> str:
