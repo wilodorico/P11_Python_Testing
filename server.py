@@ -68,7 +68,7 @@ def purchase_places():
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     try:
-        reservation = reserve_place_use_case.execute(
+        reserve_place_use_case.execute(
             club_name=club_name, competition_name=competition_name, places=places_required, date=date
         )
         flash(f"{places_required} place(s) successfully reserved for {competition_name}!", "success")

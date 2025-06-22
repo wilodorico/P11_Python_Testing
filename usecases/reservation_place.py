@@ -1,4 +1,3 @@
-from models.reservation import Reservation
 from repository_protocols.club_repository import ClubRepository
 from repository_protocols.competition_repository import CompetitionRepository
 from repository_protocols.reservation_repository import ReservationRepository
@@ -15,7 +14,7 @@ class ReservePlaceUseCase:
         self._competition_repository = competition_repository
         self._reservation_repository = reservation_repository
 
-    def execute(self, club_name: str, competition_name: str, places: int, date: str) -> Reservation:
+    def execute(self, club_name: str, competition_name: str, places: int, date: str) -> None:
         club = self._club_repository.find_by_name(club_name)
 
         if not club:
@@ -43,5 +42,3 @@ class ReservePlaceUseCase:
         self._reservation_repository.save(reservation)
         self._club_repository.update(club)
         self._competition_repository.update(competition)
-
-        return reservation
