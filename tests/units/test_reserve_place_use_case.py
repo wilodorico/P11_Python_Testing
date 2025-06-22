@@ -97,3 +97,50 @@ def test_reserve_place_with_negative_places_raises_error(club, competition, date
 
     with pytest.raises(ValueError, match="Number of places must be greater than zero."):
         use_case.execute(club_name="Test Club", competition_name="Test Competition", places=-5, date=date_now)
+
+
+def test_reserve_place_with_insufficient_points_raises_error(club, competition, date_now):
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+
+    with pytest.raises(ValueError, match="Club does not have enough points to reserve places."):
+        use_case.execute(club_name="Test Club", competition_name="Test Competition", places=25, date=date_now)
+
+
+def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(club, competition, date_now):
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+
+    exceeding_max_places_per_reservation = competition.max_places_per_reservation + 1
+
+    with pytest.raises(ValueError, match=f"Maximum booking limit is {competition.max_places_per_reservation} places."):
+        use_case.execute(
+            club_name="Test Club",
+            competition_name="Test Competition",
+            places=exceeding_max_places_per_reservation,
+            date=date_now,
+        )
+
+
+def test_reserve_place_with_not_enough_available_places_raises_error(club, date_now):
+    competition = Competition(name="Test Competition", date="2023-10-01 10:00:00", available_places=10)
+    club_repo = InMemoryClubRepository([club])
+    competition_repo = InMemoryCompetitionRepository([competition])
+    reservation_repo = InMemoryReservationRepository()
+
+    use_case = ReservePlaceUseCase(
+        club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
+    )
+
+    with pytest.raises(ValueError, match="Not enough available places in the competition."):
+        use_case.execute(club_name="Test Club", competition_name="Test Competition", places=11, date=date_now)
