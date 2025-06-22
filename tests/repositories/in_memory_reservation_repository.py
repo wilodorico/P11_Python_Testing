@@ -9,9 +9,5 @@ class InMemoryReservationRepository(ReservationRepository):
     def all(self) -> list[Reservation]:
         return self._reservations
 
-    def add(self, reservation: Reservation) -> None:
+    def save(self, reservation: Reservation) -> None:
         self._reservations.append(reservation)
-
-    def save(self) -> None:
-        # In-memory repository does not require saving to a persistent storage
-        pass
