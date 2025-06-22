@@ -40,9 +40,8 @@ class ReservePlaceUseCase:
 
         reservation = club.reserve(competition, places, date)
 
-        self._reservation_repository.add(reservation)
-        self._reservation_repository.save()
-        self._club_repository.save()
-        self._competition_repository.save()
+        self._reservation_repository.save(reservation)
+        self._club_repository.update(club)
+        self._competition_repository.update(competition)
 
         return reservation
