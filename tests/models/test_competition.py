@@ -16,7 +16,7 @@ class TestCompetition:
         assert competition.can_reserve(6) is False
 
     def test_is_within_reservation_limit(self, competition):
-        assert competition.is_within_reservation_limit(10) is True
+        assert competition.is_within_reservation_limit(3, 5) is True
 
     def test_exceeds_reservation_limit(self, competition):
-        assert competition.is_within_reservation_limit(13) is False
+        assert competition.is_within_reservation_limit(5, 8) is False
