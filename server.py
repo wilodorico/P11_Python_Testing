@@ -77,6 +77,10 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
+    clubs.reload()
+    competitions.reload()
+    reservations.reload()
+
     club_name = request.form["club"]
     competition_name = request.form["competition"]
     places = request.form["places"].strip()

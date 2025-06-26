@@ -17,6 +17,9 @@ class ReservationJsonRepository(ReservationRepository):
         data = JSONServices.load(self.file_path).get("reservations", [])
         return [Reservation.deserialize(reservation) for reservation in data]
 
+    def reload(self) -> None:
+        self._reservations = self._load()
+
     def _add(self, reservation: Reservation) -> None:
         self._reservations.append(reservation)
 
