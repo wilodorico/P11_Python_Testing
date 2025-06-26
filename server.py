@@ -79,8 +79,16 @@ def book(competition, club):
 def purchase_places():
     club_name = request.form["club"]
     competition_name = request.form["competition"]
-    places_required = int(request.form["places"])
+    places = request.form["places"].strip()
     date = datetime.now()
+
+    if not places.isdigit():
+        flash("Please enter a valid number of places", "error")
+        club = clubs.find_by_name(club_name)
+        competition = competitions.find_by_name(competition_name)
+        return render_template("booking.html", club=club, competition=competition)
+
+    places_required = int(places)
 
     try:
         reserve_place_use_case.execute(
