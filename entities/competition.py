@@ -85,4 +85,7 @@ class Competition:
         }
 
     def __str__(self) -> str:
-        return f"Competition(id={self._id}, name={self._name}, date={self._date}, available_places={self._available_places})"
+        return (
+            f"Competition(id={self._id}, name={self._name}, "
+            f"date={self._date}, available_places={self._available_places})"
+        )
