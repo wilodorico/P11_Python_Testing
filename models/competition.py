@@ -24,9 +24,9 @@ class Competition:
         """Check if there are enough available places to reserve."""
         return self._available_places >= places
 
-    def is_within_reservation_limit(self, places: int) -> bool:
-        """Check if the reservation does not exceed the maximum places per reservation."""
-        return places <= self._max_places_per_reservation
+    def is_within_reservation_limit(self, places: int, total_already_reserved: int) -> bool:
+        """Check if the total reserved places stay within the allowed limit."""
+        return total_already_reserved + places <= self._max_places_per_reservation
 
     def reserve_places(self, club, places, date):
         if not self.can_reserve(places):
