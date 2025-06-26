@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 
 from dotenv import load_dotenv
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 
 from repositories.club_json_repository import ClubJsonRepository
 from repositories.competition_json_repository import CompetitionJsonRepository
@@ -28,22 +28,37 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/showSummary", methods=["POST"])
+@app.route("/showSummary", methods=["GET", "POST"])
 def show_summary():
     clubs.reload()
     competitions.reload()
 
-    email = request.form["email"]
-    if email == "":
-        flash("Please enter an email", "error")
-        return render_template("index.html")
+    if request.method == "POST":
+        email = request.form["email"]
+        if email == "":
+            flash("Please enter an email", "error")
+            return render_template("index.html")
 
-    club = clubs.find_by_email(email)
-    if not club:
-        flash("Email not found", "error")
-        return render_template("index.html")
+        club = clubs.find_by_email(email)
+        if not club:
+            flash("Email not found", "error")
+            return render_template("index.html")
 
-    return render_template("welcome.html", club=club, competitions=competitions.all())
+        session["club_name"] = club.name
+
+        return render_template("welcome.html", club=club, competitions=competitions.all())
+
+    if request.method == "GET":
+        club_name = session.get("club_name")
+        if not club_name:
+            flash("You must be logged in to view this page.", "error")
+            return redirect(url_for("index"))
+
+        club = clubs.find_by_name(club_name)
+        if not club:
+            flash("club not found.", "error")
+            return redirect(url_for("index"))
+        return render_template("welcome.html", club=club, competitions=competitions.all())
 
 
 @app.route("/book/<competition>/<club>")
@@ -91,6 +106,8 @@ def points_dashboard():
 
 @app.route("/logout")
 def logout():
+    session.pop("club_name", None)
+    flash("You have been logged out.", "info")
     return redirect(url_for("index"))
 
 

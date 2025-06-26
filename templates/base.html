@@ -13,7 +13,11 @@
             <h1 class="mb-0">GudLFT</h1>
             <nav class="mt-2">
                 <ul class="nav">
-                    <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+                    {% if session.club_name %}
+                        <li class="nav-item"><a class="nav-link text-white" href="/showSummary">Home</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link text-white" href="/">Login</a></li>
+                    {% endif %}
                     <li class="nav-item"><a class="nav-link text-white" href="/points-dashboard">Points Dashboard</a></li>
                 </ul>
             </nav>
