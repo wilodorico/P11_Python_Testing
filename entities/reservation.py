@@ -3,6 +3,8 @@ from datetime import datetime
 
 
 class Reservation:
+    """Class representing a reservation for a club in a competition."""
+
     def __init__(self, club_id: str, competition_id: str, reserved_places: int, date: datetime):
         self._id = str(uuid.uuid4())
         self._club_id = club_id

@@ -5,6 +5,8 @@ from entities.reservation import Reservation
 
 
 class Competition:
+    """Class representing a competition with a name, date, available places and maximum places per reservation."""
+
     MAX_PLACES_PER_RESERVATION = 12
 
     def __init__(
@@ -29,6 +31,7 @@ class Competition:
         return total_already_reserved + places <= self._max_places_per_reservation
 
     def reserve_places(self, club, places, date):
+        """Reserve places for a club in the competition."""
         if not self.can_reserve(places):
             raise ValueError("Not enough available places to reserve.")
         if not club.has_enough_points(places):

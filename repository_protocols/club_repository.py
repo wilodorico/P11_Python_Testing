@@ -4,6 +4,8 @@ from entities.club import Club
 
 
 class ClubRepository(Protocol):
+    """Protocol for a repository that manages Club entities."""
+
     def all(self) -> list[Club]: ...
 
     def find_by_name(self, name: str) -> Club | None: ...

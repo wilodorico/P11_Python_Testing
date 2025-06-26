@@ -6,6 +6,8 @@ from repository_protocols.reservation_repository import ReservationRepository
 
 
 class ReservePlaceUseCase:
+    """Use case for reserving places in a competition for a club."""
+
     def __init__(
         self,
         club_repository: ClubRepository,
@@ -17,6 +19,7 @@ class ReservePlaceUseCase:
         self._reservation_repository = reservation_repository
 
     def execute(self, club_name: str, competition_name: str, places: int, date: datetime) -> None:
+        """Reserves places in a competition for a club."""
         club = self._club_repository.find_by_name(club_name)
 
         if not club:

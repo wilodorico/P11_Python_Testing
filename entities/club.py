@@ -2,6 +2,8 @@ import uuid
 
 
 class Club:
+    """Class representing a club with a name, email, and points system for reservation."""
+
     def __init__(self, name: str, email: str, points: int):
         self._id = str(uuid.uuid4())
         self._name = name
@@ -19,6 +21,7 @@ class Club:
         self._points -= points
 
     def reserve(self, competition, places, date):
+        """Reserve places for the club in a competition."""
         return competition.reserve_places(self, places, date)
 
     @property
