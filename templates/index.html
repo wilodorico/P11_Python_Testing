@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>Welcome to the GUDLFT Registration Portal!</h1>
+    <a href="/points-dashboard">View Points Dashboard</a>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <ul class=flashes>
@@ -15,7 +16,7 @@
             </ul>
         {% endif %}
     {% endwith %}
-    Please enter your secretary email to continue:
+    <p>Please enter your secretary email to continue:</p>
     <form action="showSummary" method="post">
         <label for="email">Email:</label>
         <input type="email" name="email" id=""/>
