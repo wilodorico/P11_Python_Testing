@@ -33,8 +33,15 @@ class ReservePlaceUseCase:
         if not club.has_enough_points(places):
             raise ValueError("Club does not have enough points to reserve places.")
 
-        if not competition.is_within_reservation_limit(places):
-            raise ValueError(f"Maximum booking limit is {competition.max_places_per_reservation} places.")
+        total_already_reserved = self._reservation_repository.get_total_places_club_reservation_for_competition(
+            club.id, competition.id
+        )
+        if not competition.is_within_reservation_limit(places, total_already_reserved):
+            remaining_quota = competition.max_places_per_reservation - total_already_reserved
+            raise ValueError(
+                f"You have already reserved {total_already_reserved} place(s). "
+                f"You can only reserve {remaining_quota} more."
+            )
 
         if not competition.can_reserve(places):
             raise ValueError("Not enough available places in the competition.")

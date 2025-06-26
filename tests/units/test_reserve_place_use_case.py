@@ -4,6 +4,7 @@ import pytest
 
 from models.club import Club
 from models.competition import Competition
+from models.reservation import Reservation
 from tests.repositories.in_memory_club_repository import InMemoryClubRepository
 from tests.repositories.in_memory_competition_repository import InMemoryCompetitionRepository
 from tests.repositories.in_memory_reservation_repository import InMemoryReservationRepository
@@ -133,19 +134,27 @@ def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(cl
     competition_repo = InMemoryCompetitionRepository([future_competition])
     reservation_repo = InMemoryReservationRepository()
 
+    reserved_places = 8
+    remaining_quota = future_competition.MAX_PLACES_PER_RESERVATION - reserved_places
+
+    existing_reservations = Reservation(
+        club_id=club.id, competition_id=future_competition.id, reserved_places=reserved_places, date=date_now
+    )
+
+    reservation_repo.save(existing_reservations)
+
     use_case = ReservePlaceUseCase(
         club_repository=club_repo, competition_repository=competition_repo, reservation_repository=reservation_repo
     )
 
-    exceeding_max_places_per_reservation = future_competition.max_places_per_reservation + 1
-
     with pytest.raises(
-        ValueError, match=f"Maximum booking limit is {future_competition.max_places_per_reservation} places."
+        ValueError,
+        match=f"You have already reserved {reserved_places} place\\(s\\).*You can only reserve {remaining_quota} more.",
     ):
         use_case.execute(
             club_name="Test Club",
             competition_name="Test Competition",
-            places=exceeding_max_places_per_reservation,
+            places=5,
             date=date_now,
         )
 
