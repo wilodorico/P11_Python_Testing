@@ -1,7 +1,7 @@
 import os
 
+from entities.reservation import Reservation
 from json_services import JSONServices
-from models.reservation import Reservation
 from repository_protocols.reservation_repository import ReservationRepository
 
 

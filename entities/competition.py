@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from models.reservation import Reservation
+from entities.reservation import Reservation
 
 
 class Competition:

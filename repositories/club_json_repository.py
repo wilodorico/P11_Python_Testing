@@ -1,7 +1,7 @@
 import os
 
+from entities.club import Club
 from json_services import JSONServices
-from models.club import Club
 from repository_protocols.club_repository import ClubRepository
 
 

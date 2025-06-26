@@ -1,4 +1,4 @@
-from models.competition import Competition
+from entities.competition import Competition
 from repository_protocols.competition_repository import CompetitionRepository
 
 

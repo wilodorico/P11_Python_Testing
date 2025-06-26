@@ -1,7 +1,7 @@
 import os
 
+from entities.competition import Competition
 from json_services import JSONServices
-from models.competition import Competition
 from repository_protocols.competition_repository import CompetitionRepository
 
 

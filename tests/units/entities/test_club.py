@@ -1,6 +1,6 @@
 import pytest
 
-from models.club import Club
+from entities.club import Club
 
 
 @pytest.fixture

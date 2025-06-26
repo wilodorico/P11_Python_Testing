@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from models.club import Club
+from entities.club import Club
 
 
 class ClubRepository(Protocol):

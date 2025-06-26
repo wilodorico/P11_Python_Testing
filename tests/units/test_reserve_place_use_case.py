@@ -2,9 +2,9 @@ import datetime
 
 import pytest
 
-from models.club import Club
-from models.competition import Competition
-from models.reservation import Reservation
+from entities.club import Club
+from entities.competition import Competition
+from entities.reservation import Reservation
 from tests.repositories.in_memory_club_repository import InMemoryClubRepository
 from tests.repositories.in_memory_competition_repository import InMemoryCompetitionRepository
 from tests.repositories.in_memory_reservation_repository import InMemoryReservationRepository

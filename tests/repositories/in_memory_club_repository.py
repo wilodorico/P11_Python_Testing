@@ -1,4 +1,4 @@
-from models.club import Club
+from entities.club import Club
 from repository_protocols.club_repository import ClubRepository
 
 

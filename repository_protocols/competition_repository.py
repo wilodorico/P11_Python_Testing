@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from models.competition import Competition
+from entities.competition import Competition
 
 
 class CompetitionRepository(Protocol):

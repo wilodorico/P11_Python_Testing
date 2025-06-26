@@ -1,6 +1,6 @@
 import pytest
 
-from models.competition import Competition
+from entities.competition import Competition
 
 
 @pytest.fixture

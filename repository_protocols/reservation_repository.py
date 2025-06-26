@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from models.reservation import Reservation
+from entities.reservation import Reservation
 
 
 class ReservationRepository(Protocol):
