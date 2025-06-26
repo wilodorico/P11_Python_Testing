@@ -1,27 +1,19 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking for {{ competition.name }} || GUDLFT</title>
-</head>
-<body>
-    <h2>{{ competition.name }}</h2>
-    {% with messages = get_flashed_messages()%}
-        {% if messages %}
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        Places available: {{ competition.available_places }}
-        <form action="/purchasePlaces" method="post">
-            <input type="hidden" name="club" value="{{ club.name }}">
-            <input type="hidden" name="competition" value="{{ competition.name }}">
-            <label for="places">How many places?</label>
-            <input type="number" name="places" id=""/>
-            <button type="submit">Book</button>
-        </form>
-    {% endwith %}
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Booking for {{ competition.name }} || GUDLFT{% endblock %}
+{% block content %}
+    <div class="card mx-auto mt-5" style="max-width: 400px;">
+        <div class="card-body">
+            <h2 class="card-title">{{ competition.name }}</h2>
+            <p class="mb-3"><strong>Places available:</strong> {{ competition.available_places }}</p>
+            <form action="/purchasePlaces" method="post" novalidate>
+                <input type="hidden" name="club" value="{{ club.name }}">
+                <input type="hidden" name="competition" value="{{ competition.name }}">
+                <div class="mb-3">
+                    <label for="places" class="form-label">How many places?</label>
+                    <input type="number" name="places" id="places" class="form-control" min="1" required />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Book</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -43,7 +43,7 @@ def show_summary():
         flash("Email not found", "error")
         return render_template("index.html")
 
-    return render_template("welcome.html", club=club, competitions=competitions)
+    return render_template("welcome.html", club=club, competitions=competitions.all())
 
 
 @app.route("/book/<competition>/<club>")
@@ -57,7 +57,7 @@ def book(competition, club):
         return render_template("booking.html", club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
-        return render_template("welcome.html", club=club, competitions=competitions)
+        return render_template("welcome.html", club=club, competitions=competitions.all())
 
 
 @app.route("/purchasePlaces", methods=["POST"])
@@ -80,7 +80,7 @@ def purchase_places():
         return render_template("booking.html", club=club, competition=competition)
 
     club = clubs.find_by_name(club_name)
-    return render_template("welcome.html", club=club, competitions=competitions)
+    return render_template("welcome.html", club=club, competitions=competitions.all())
 
 
 @app.route("/points-dashboard")
