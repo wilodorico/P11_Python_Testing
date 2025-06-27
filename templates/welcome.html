@@ -13,7 +13,14 @@
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">{{ comp.name }}</h5>
+                    <h5 class="card-title">
+                        {{ comp.name }}
+                        {% if comp.date >= date_now %}
+                            <span class="badge bg-success">Upcoming</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Outdated</span>
+                        {% endif %}
+                    </h5>
                     <p class="card-text mb-1"><strong>Date:</strong> {{ comp.date }}</p>
                     <p class="card-text mb-2"><strong>Number of Places:</strong> {{ comp.available_places }}</p>
                     {% if comp.available_places|int > 0 %}

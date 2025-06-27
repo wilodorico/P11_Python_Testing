@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from entities.competition import Competition
 from json_services import JSONServices
@@ -25,8 +26,11 @@ class CompetitionJsonRepository(CompetitionRepository):
         self._competitions = self._load()
 
     def all(self) -> list[Competition]:
-        """Get all competitions from the repository."""
-        return self._competitions
+        """Get all competitions sorted by upcoming first, then outdated."""
+        now = datetime.now()
+        upcoming = [competition for competition in self._competitions if competition.date >= now]
+        outdated = [competition for competition in self._competitions if competition.date < now]
+        return sorted(upcoming, key=lambda c: c.date) + sorted(outdated, key=lambda c: c.date)
 
     def find_by_name(self, name: str) -> Competition | None:
         """Find a competition by its name."""

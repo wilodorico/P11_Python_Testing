@@ -32,6 +32,7 @@ def index():
 def show_summary():
     clubs.reload()
     competitions.reload()
+    date_now = datetime.now()
 
     if request.method == "POST":
         email = request.form["email"]
@@ -46,7 +47,7 @@ def show_summary():
 
         session["club_name"] = club.name
 
-        return render_template("welcome.html", club=club, competitions=competitions.all())
+        return render_template("welcome.html", club=club, competitions=competitions.all(), date_now=date_now)
 
     if request.method == "GET":
         club_name = session.get("club_name")
@@ -58,7 +59,7 @@ def show_summary():
         if not club:
             flash("club not found.", "error")
             return redirect(url_for("index"))
-        return render_template("welcome.html", club=club, competitions=competitions.all())
+        return render_template("welcome.html", club=club, competitions=competitions.all(), date_now=date_now)
 
 
 @app.route("/book/<competition>/<club>")
