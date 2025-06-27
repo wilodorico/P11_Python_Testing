@@ -22,3 +22,7 @@ class InMemoryClubRepository(ClubRepository):
                 break
         else:
             self._clubs.append(club)
+
+    def reload(self) -> None:
+        """Reload the repository (no-op for in-memory repository)."""
+        pass

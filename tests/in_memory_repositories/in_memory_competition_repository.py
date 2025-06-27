@@ -19,3 +19,7 @@ class InMemoryCompetitionRepository(CompetitionRepository):
                 break
         else:
             self._competitions.append(competition)
+
+    def reload(self) -> None:
+        """Reload the repository (no-op for in-memory repository)."""
+        pass

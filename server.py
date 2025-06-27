@@ -14,12 +14,14 @@ load_dotenv()  # Load environment variables from .env file
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 
-reservations = ReservationJsonRepository("reservations.json")
-clubs = ClubJsonRepository("clubs.json")
-competitions = CompetitionJsonRepository("competitions.json")
+reservation_repository = ReservationJsonRepository("reservations.json")
+club_repository = ClubJsonRepository("clubs.json")
+competition_repository = CompetitionJsonRepository("competitions.json")
 
 reserve_place_use_case = ReservePlaceUseCase(
-    club_repository=clubs, competition_repository=competitions, reservation_repository=reservations
+    club_repository=club_repository,
+    competition_repository=competition_repository,
+    reservation_repository=reservation_repository,
 )
 
 
@@ -30,8 +32,8 @@ def index():
 
 @app.route("/showSummary", methods=["GET", "POST"])
 def show_summary():
-    clubs.reload()
-    competitions.reload()
+    club_repository.reload()
+    competition_repository.reload()
     date_now = datetime.now()
 
     if request.method == "POST":
@@ -40,14 +42,14 @@ def show_summary():
             flash("Please enter an email", "error")
             return render_template("index.html")
 
-        club = clubs.find_by_email(email)
+        club = club_repository.find_by_email(email)
         if not club:
             flash("Email not found", "error")
             return render_template("index.html")
 
         session["club_name"] = club.name
 
-        return render_template("welcome.html", club=club, competitions=competitions.all(), date_now=date_now)
+        return render_template("welcome.html", club=club, competitions=competition_repository.all(), date_now=date_now)
 
     if request.method == "GET":
         club_name = session.get("club_name")
@@ -55,32 +57,32 @@ def show_summary():
             flash("You must be logged in to view this page.", "error")
             return redirect(url_for("index"))
 
-        club = clubs.find_by_name(club_name)
+        club = club_repository.find_by_name(club_name)
         if not club:
             flash("club not found.", "error")
             return redirect(url_for("index"))
-        return render_template("welcome.html", club=club, competitions=competitions.all(), date_now=date_now)
+        return render_template("welcome.html", club=club, competitions=competition_repository.all(), date_now=date_now)
 
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-    clubs.reload()
-    competitions.reload()
-    found_club = clubs.find_by_name(club)
-    found_competition = competitions.find_by_name(competition)
+    club_repository.reload()
+    competition_repository.reload()
+    found_club = club_repository.find_by_name(club)
+    found_competition = competition_repository.find_by_name(competition)
 
     if found_club and found_competition:
         return render_template("booking.html", club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
-        return render_template("welcome.html", club=club, competitions=competitions.all())
+        return render_template("welcome.html", club=club, competitions=competition_repository.all())
 
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
-    clubs.reload()
-    competitions.reload()
-    reservations.reload()
+    club_repository.reload()
+    competition_repository.reload()
+    reservation_repository.reload()
 
     club_name = request.form["club"]
     competition_name = request.form["competition"]
@@ -89,8 +91,8 @@ def purchase_places():
 
     if not places.isdigit():
         flash("Please enter a valid number of places", "error")
-        club = clubs.find_by_name(club_name)
-        competition = competitions.find_by_name(competition_name)
+        club = club_repository.find_by_name(club_name)
+        competition = competition_repository.find_by_name(competition_name)
         return render_template("booking.html", club=club, competition=competition)
 
     places_required = int(places)
@@ -103,18 +105,18 @@ def purchase_places():
 
     except ValueError as e:
         flash(str(e), "error")
-        club = clubs.find_by_name(club_name)
-        competition = competitions.find_by_name(competition_name)
+        club = club_repository.find_by_name(club_name)
+        competition = competition_repository.find_by_name(competition_name)
         return render_template("booking.html", club=club, competition=competition)
 
-    club = clubs.find_by_name(club_name)
-    return render_template("welcome.html", club=club, competitions=competitions.all(), date_now=date_now)
+    club = club_repository.find_by_name(club_name)
+    return render_template("welcome.html", club=club, competitions=competition_repository.all(), date_now=date_now)
 
 
 @app.route("/points-dashboard")
 def points_dashboard():
-    clubs.reload()
-    return render_template("points_dashboard.html", clubs=clubs.all())
+    club_repository.reload()
+    return render_template("points_dashboard.html", clubs=club_repository.all())
 
 
 @app.route("/logout")
