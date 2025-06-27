@@ -85,7 +85,7 @@ def purchase_places():
     club_name = request.form["club"]
     competition_name = request.form["competition"]
     places = request.form["places"].strip()
-    date = datetime.now()
+    date_now = datetime.now()
 
     if not places.isdigit():
         flash("Please enter a valid number of places", "error")
@@ -97,7 +97,7 @@ def purchase_places():
 
     try:
         reserve_place_use_case.execute(
-            club_name=club_name, competition_name=competition_name, places=places_required, date=date
+            club_name=club_name, competition_name=competition_name, places=places_required, date=date_now
         )
         flash(f"{places_required} place(s) successfully reserved for {competition_name}!", "success")
 
@@ -108,7 +108,7 @@ def purchase_places():
         return render_template("booking.html", club=club, competition=competition)
 
     club = clubs.find_by_name(club_name)
-    return render_template("welcome.html", club=club, competitions=competitions.all())
+    return render_template("welcome.html", club=club, competitions=competitions.all(), date_now=date_now)
 
 
 @app.route("/points-dashboard")
