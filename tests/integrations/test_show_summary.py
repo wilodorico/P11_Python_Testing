@@ -49,3 +49,15 @@ def test_show_summary_get_with_login(client, monkeypatch):
     response = client.get("/showSummary")
     assert response.status_code == 200
     assert b"test@club.com" in response.data
+
+
+def test_show_summary_get_with_unknown_club(client, monkeypatch):
+    club_repository = InMemoryClubRepository([])
+    monkeypatch.setattr("server.club_repository", club_repository)
+
+    with client.session_transaction() as session:
+        session["club_name"] = "Unknown Club"
+
+    response = client.get("/showSummary", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"club not found" in response.data
