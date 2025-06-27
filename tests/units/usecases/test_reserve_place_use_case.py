@@ -149,7 +149,7 @@ def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(cl
 
     with pytest.raises(
         ValueError,
-        match=f"You have already reserved {reserved_places} place(s).*You can only reserve {remaining_quota} more.",
+        match=f"You have already reserved {reserved_places} place\\(s\\). You can only reserve {remaining_quota} more.",
     ):
         use_case.execute(
             club_name="Test Club",
