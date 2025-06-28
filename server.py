@@ -70,12 +70,12 @@ def book(competition, club):
     competition_repository.reload()
     found_club = club_repository.find_by_name(club)
     found_competition = competition_repository.find_by_name(competition)
-
+    date_now = datetime.now()
     if found_club and found_competition:
         return render_template("booking.html", club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
-        return render_template("welcome.html", club=club, competitions=competition_repository.all())
+        return render_template("welcome.html", club=club, competitions=competition_repository.all(), date_now=date_now)
 
 
 @app.route("/purchasePlaces", methods=["POST"])
