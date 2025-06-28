@@ -22,3 +22,7 @@ class InMemoryReservationRepository(ReservationRepository):
 
     def save(self, reservation: Reservation) -> None:
         self._reservations.append(reservation)
+
+    def reload(self) -> None:
+        # In-memory repository does not need to reload data
+        pass
