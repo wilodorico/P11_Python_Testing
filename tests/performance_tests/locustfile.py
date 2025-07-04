@@ -5,6 +5,7 @@ from locust import HttpUser, between, task
 
 class ProjectPerfTest(HttpUser):
     wait_time = between(1, 3)
+    host = "http://localhost:5000"
 
     def on_start(self):
         """Initialize the test session with a login."""
