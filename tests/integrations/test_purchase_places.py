@@ -58,6 +58,8 @@ def test_purchase_places_success(client, monkeypatch, default_club, future_compe
 
     assert response.status_code == 200
     assert f"{reserved_places} place(s) successfully reserved for {future_competition.name}!" in response.data.decode()
+    assert future_competition.available_places == 5
+    assert default_club.points == 8
 
 
 def test_purchase_places_fails_with_invalid_input(client, monkeypatch, default_club, future_competition):

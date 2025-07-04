@@ -44,11 +44,11 @@ def test_successful_reserve_place(club, future_competition, date_now):
     assert fetched_club.points == 15
     assert fetched_competition.available_places == 15
     assert len(reservation_repo.all()) == 1
+
     reservation = reservation_repo.all()[0]
     assert reservation.club_id == fetched_club.id
     assert reservation.competition_id == fetched_competition.id
     assert reservation.reserved_places == 5
-    assert reservation.date == date_now
     assert reservation.date == date_now
 
 
@@ -153,7 +153,9 @@ def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(cl
 
     with pytest.raises(
         ValueError,
-        match=f"You have already reserved {reserved_places} place\\(s\\). You can only reserve {remaining_quota} more.",
+        match=(
+            f"You have already reserved {reserved_places} place\\(s\\). You can only reserve {remaining_quota} more."
+        ),
     ):
         use_case.execute(
             club_name=club.name,
