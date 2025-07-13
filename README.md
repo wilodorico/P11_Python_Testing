@@ -69,12 +69,20 @@ repositories, and use cases.
    pip install -r requirements.txt
    ```
 
-4. **Create .env file**
+4. **Create .env file and paste**
    ```bash
-   echo "SECRET_KEY=your_secret_key_here" > .env
+   FLASK_APP=server.py
+   FLASK_ENV=development
+   FLASK_DEBUG=1
+   SECRET_KEY="secret_key_mode_debug"
    ```
 
-5. **Run the application**
+5. **Switch to QA branch for testing**
+   ```bash
+   git checkout QA
+   ```
+
+6. **Run the application**
    ```bash
    # For Windows:
    flask run
@@ -82,7 +90,7 @@ repositories, and use cases.
    python -m flask run
    ```
 
-6. **Access the application**
+7. **Access the application**
    Open your browser and go to `http://127.0.0.1:5000`
 
 ## 🧪 Testing
