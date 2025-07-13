@@ -23,11 +23,15 @@
                     </h5>
                     <p class="card-text mb-1"><strong>Date:</strong> {{ comp.date }}</p>
                     <p class="card-text mb-2"><strong>Number of Places:</strong> {{ comp.available_places }}</p>
-                    {% if comp.available_places|int > 0 %}
-                        <a href="{{ url_for('book', competition=comp.name, club=club.name) }}" 
-                           class="btn btn-success btn-sm">Book Places</a>
+                    {% if comp.date >= date_now %}
+                        {% if comp.available_places|int > 0 %}
+                            <a href="{{ url_for('book', competition=comp.name, club=club.name) }}" 
+                               class="btn btn-success btn-sm">Book Places</a>
+                        {% else %}
+                            <span class="badge bg-danger">No places available</span>
+                        {% endif %}
                     {% else %}
-                        <span class="badge bg-danger">No places available</span>
+                        <span class="badge bg-secondary">Registration closed</span>
                     {% endif %}
                 </div>
             </div>
