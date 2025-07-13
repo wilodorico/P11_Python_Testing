@@ -1,51 +1,140 @@
-# gudlift-registration
+# Gudlift Competition Registration Platform
 
-1. Why
+[![Python Version](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/Flask-1.1.2-green.svg)](https://flask.palletsprojects.com/)
+[![Pytest](https://img.shields.io/badge/pytest-8.3.5-red.svg)](https://docs.pytest.org/)
+[![Locust](https://img.shields.io/badge/locust-2.37.11-orange.svg)](https://locust.io/)
 
+## 📚 Overview
 
-    This is a proof of concept (POC) project to show a light-weight version of our competition booking platform. The aim is the keep things as light as possible, and use feedback from the users to iterate.
+This platform allows sports clubs to register for competitions, book places for their members, and manage their competition points. 
+The application follows a clean architecture approach with separation of concerns between entities, 
+repositories, and use cases.
 
-2. Getting Started
+## 🌟 Features
 
-    This project uses the following technologies:
+- **User Authentication**: Clubs can log in using their registered email addresses
+- **Competition Listing**: View available competitions with dates and available places
+- **Place Booking**: Clubs can reserve places in competitions
+- **Points Management**: Clubs have points that are used for booking places
+- **Dashboard**: View points status across all clubs
 
-    * Python v3.x+
+## 🏗️ Project Structure
 
-    * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
+```
+├── entities/              # Domain models (Club, Competition, Reservation)
+├── repositories/          # JSON data access implementations
+├── repository_protocols/  # Interface definitions for repositories
+├── templates/             # HTML templates for the web interface
+├── tests/                 # Test suite
+│   ├── integrations/      # Integration tests
+│   ├── in_memory_repositories/ # Repository implementations for testing
+│   ├── performance_tests/ # Locust performance tests
+│   ├── units/             # Unit tests
+│   └── conftest.py        # Pytest fixtures
+├── usecases/              # Business logic implementations
+├── *.json                 # Data files (clubs, competitions, reservations)
+├── server.py              # Flask application
+└── globals.py             # Global constants and configurations
+```
 
-        Whereas Django does a lot of things for us out of the box, Flask allows us to add only what we need. 
-     
+## 💻 Installation
 
-    * [Virtual environment](https://virtualenv.pypa.io/en/stable/installation.html)
+### Prerequisites
 
-        This ensures you'll be able to install the correct packages without interfering with Python on your machine.
+- Python 3.x
+- [Virtualenv](https://virtualenv.pypa.io/en/stable/installation.html) (installed globally)
 
-        Before you begin, please ensure you have this installed globally. 
+### Setup Steps
 
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/wilodorico/P11_Python_Testing.git
+   cd P11_Python_Testing
+   ```
 
-3. Installation
+2. **Create and activate a virtual environment**
+   ```bash
+   # For Windows:
+   python -m venv venv
+   venv\Scripts\activate
 
-    - After cloning, change into the directory and type <code>virtualenv .</code>. This will then set up a a virtual python environment within that directory.
+   # For macOS/Linux:
+   python -m venv venv
+   source venv/bin/activate
+   ```
 
-    - Next, type <code>source bin/activate</code>. You should see that your command prompt has changed to the name of the folder. This means that you can install packages in here without affecting affecting files outside. To deactivate, type <code>deactivate</code>
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    - Rather than hunting around for the packages you need, you can install in one step. Type <code>pip install -r requirements.txt</code>. This will install all the packages listed in the respective file. If you install a package, make sure others know by updating the requirements.txt file. An easy way to do this is <code>pip freeze > requirements.txt</code>
+4. **Create .env file**
+   ```bash
+   echo "SECRET_KEY=your_secret_key_here" > .env
+   ```
 
-    - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
+5. **Run the application**
+   ```bash
+   # For Windows:
+   flask run
+   # OR
+   python -m flask run
+   ```
 
-    - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+6. **Access the application**
+   Open your browser and go to `http://127.0.0.1:5000`
 
-4. Current Setup
+## 🧪 Testing
 
-    The app is powered by [JSON files](https://www.tutorialspoint.com/json/json_quick_guide.htm). This is to get around having a DB until we actually need one. The main ones are:
-     
-    * competitions.json - list of competitions
-    * clubs.json - list of clubs with relevant information. You can look here to see what email addresses the app will accept for login.
+### Running Tests
 
-5. Testing
+```bash
+# Run all tests
+pytest
 
-    You are free to use whatever testing framework you like-the main thing is that you can show what tests you are using.
+# Generates HTML report in htmlcov/
+pytest --cov=. --cov-report=html
+```
 
-    We also like to show how well we're testing, so there's a module called 
-    [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
+### Performance Testing
 
+```bash
+# Start the Flask server
+flask run
+
+# In a separate terminal, run Locust
+cd tests/performance_tests
+
+# Run in Web interface
+# Run command and click on link
+locust
+
+# Run in terminal
+# Run command
+locust --headless --users 50 --spawn-rate 3 -H http://127.0.0.1:5000
+
+```
+Access the Locust web interface at `http://localhost:8089` to configure and run performance tests.
+
+## 📊 Data Structure
+
+The application uses JSON files for data storage:
+
+- **clubs.json**: Contains club information including name, email, and points
+- **competitions.json**: Lists available competitions with dates and places
+- **reservations.json**: Tracks bookings made by clubs
+
+## 👥 Test Users
+
+You can log in using the following credentials:
+
+| Club | Email | Points |
+|------|-------|--------|
+| Simply Lift | john@simplylift.co | 13 |
+| Iron Temple | admin@irontemple.com | 4 |
+| She Lifts | kate@shelifts.co.uk | 12 |
+
+## 👤 Authors
+
+wilodorico
