@@ -1,5 +1,5 @@
 from entities.club import Club
-from repository_protocols.club_repository import ClubRepository
+from ports.club_repository import ClubRepository
 
 
 class InMemoryClubRepository(ClubRepository):

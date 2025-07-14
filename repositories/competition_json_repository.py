@@ -3,7 +3,7 @@ from datetime import datetime
 
 from entities.competition import Competition
 from json_services import JSONServices
-from repository_protocols.competition_repository import CompetitionRepository
+from ports.competition_repository import CompetitionRepository
 
 
 class CompetitionJsonRepository(CompetitionRepository):

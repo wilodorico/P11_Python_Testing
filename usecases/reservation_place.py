@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from repository_protocols.club_repository import ClubRepository
-from repository_protocols.competition_repository import CompetitionRepository
-from repository_protocols.reservation_repository import ReservationRepository
+from ports.club_repository import ClubRepository
+from ports.competition_repository import CompetitionRepository
+from ports.reservation_repository import ReservationRepository
 
 
 class ReservePlaceUseCase:

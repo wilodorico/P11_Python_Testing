@@ -1,5 +1,5 @@
 from entities.reservation import Reservation
-from repository_protocols.reservation_repository import ReservationRepository
+from ports.reservation_repository import ReservationRepository
 
 
 class InMemoryReservationRepository(ReservationRepository):

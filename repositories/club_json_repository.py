@@ -2,7 +2,7 @@ import os
 
 from entities.club import Club
 from json_services import JSONServices
-from repository_protocols.club_repository import ClubRepository
+from ports.club_repository import ClubRepository
 
 
 class ClubJsonRepository(ClubRepository):
