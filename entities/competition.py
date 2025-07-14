@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 
+from entities.club import Club
 from entities.reservation import Reservation
 
 
@@ -22,6 +23,9 @@ class Competition:
         self._available_places = available_places
         self._max_places_per_reservation = max_places_per_reservation
 
+    def _deduct_available_places(self, places: int) -> None:
+        self._available_places -= places
+
     def can_reserve(self, places: int) -> bool:
         """Check if there are enough available places to reserve."""
         return self._available_places >= places
@@ -30,15 +34,32 @@ class Competition:
         """Check if the total reserved places stay within the allowed limit."""
         return total_already_reserved + places <= self._max_places_per_reservation
 
-    def reserve_places(self, club, places, date):
+    def reserve_places(self, club: Club, places: int, date: datetime, total_already_reserved: int = 0) -> Reservation:
         """Reserve places for a club in the competition."""
-        if not self.can_reserve(places):
-            raise ValueError("Not enough available places to reserve.")
+        if date is None:
+            raise ValueError("Reservation date is required.")
+
+        if places <= 0:
+            raise ValueError("Number of places must be greater than zero.")
+
+        if self.date < date:
+            raise ValueError("Cannot reserve places for a past competition.")
+
         if not club.has_enough_points(places):
-            raise ValueError("Not enough points to reserve places.")
+            raise ValueError("Club does not have enough points to reserve places.")
+
+        if not self.is_within_reservation_limit(places, total_already_reserved):
+            remaining_quota = self._max_places_per_reservation - total_already_reserved
+            raise ValueError(
+                f"You have already reserved {total_already_reserved} place(s). "
+                f"You can only reserve {remaining_quota} more."
+            )
+
+        if not self.can_reserve(places):
+            raise ValueError("Not enough available places in the competition.")
 
         club.consume_points(places)
-        self._available_places -= places
+        self._deduct_available_places(places)
 
         return Reservation(club.id, self._id, places, date)
 

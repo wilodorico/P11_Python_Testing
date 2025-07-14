@@ -1,5 +1,7 @@
 import uuid
 
+from entities.reservation import Reservation
+
 
 class Club:
     """Class representing a club with a name, email, and points system for reservation."""
@@ -20,9 +22,9 @@ class Club:
             raise ValueError("Not enough points to consume.")
         self._points -= points
 
-    def reserve(self, competition, places, date):
+    def reserve(self, competition, places, date, total_already_reserved: int = 0) -> Reservation:
         """Reserve places for the club in a competition."""
-        return competition.reserve_places(self, places, date)
+        return competition.reserve_places(self, places, date, total_already_reserved)
 
     @property
     def id(self) -> str:

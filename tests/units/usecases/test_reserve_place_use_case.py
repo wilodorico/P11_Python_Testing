@@ -166,7 +166,7 @@ def test_reserve_place_with_exceeding_max_places_per_reservation_raises_error(cl
 
 
 def test_reserve_place_with_not_enough_available_places_raises_error(club, date_now):
-    future_date = (datetime.datetime.now() + datetime.timedelta(days=15)).strftime("%Y-%m-%d %H:%M:%S")
+    future_date = datetime.datetime.now() + datetime.timedelta(days=15)
     competition = Competition(name="Test Competition", date=future_date, available_places=10)
     club_repo = InMemoryClubRepository([club])
     competition_repo = InMemoryCompetitionRepository([competition])
