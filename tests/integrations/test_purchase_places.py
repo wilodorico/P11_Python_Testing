@@ -3,11 +3,11 @@ from typing import Tuple
 
 import pytest
 
+from adapters.in_memory_club_repository import InMemoryClubRepository
+from adapters.in_memory_competition_repository import InMemoryCompetitionRepository
+from adapters.in_memory_reservation_repository import InMemoryReservationRepository
 from entities.club import Club
 from entities.competition import Competition
-from tests.in_memory_repositories.in_memory_club_repository import InMemoryClubRepository
-from tests.in_memory_repositories.in_memory_competition_repository import InMemoryCompetitionRepository
-from tests.in_memory_repositories.in_memory_reservation_repository import InMemoryReservationRepository
 from usecases.reservation_place import ReservePlaceUseCase
 
 

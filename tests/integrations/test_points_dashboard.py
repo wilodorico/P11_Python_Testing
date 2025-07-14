@@ -1,5 +1,5 @@
+from adapters.in_memory_club_repository import InMemoryClubRepository
 from entities.club import Club
-from tests.in_memory_repositories.in_memory_club_repository import InMemoryClubRepository
 
 
 def test_points_dashboard_with_clubs(client, monkeypatch):

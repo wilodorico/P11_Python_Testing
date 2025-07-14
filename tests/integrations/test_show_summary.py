@@ -1,9 +1,9 @@
 import datetime
 
+from adapters.in_memory_club_repository import InMemoryClubRepository
+from adapters.in_memory_competition_repository import InMemoryCompetitionRepository
 from entities.club import Club
 from entities.competition import Competition
-from tests.in_memory_repositories.in_memory_club_repository import InMemoryClubRepository
-from tests.in_memory_repositories.in_memory_competition_repository import InMemoryCompetitionRepository
 
 
 def test_login_without_email(client):
