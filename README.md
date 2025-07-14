@@ -23,12 +23,11 @@ repositories, and use cases.
 
 ```
 ├── entities/              # Domain models (Club, Competition, Reservation)
-├── repositories/          # JSON data access implementations
-├── repository_protocols/  # Interface definitions for repositories
+├── adapters/              # JSON data access implementations and in memory repository for tests
+├── ports/                 # Interface definitions for repositories
 ├── templates/             # HTML templates for the web interface
 ├── tests/                 # Test suite
 │   ├── integrations/      # Integration tests
-│   ├── in_memory_repositories/ # Repository implementations for testing
 │   ├── performance_tests/ # Locust performance tests
 │   ├── units/             # Unit tests
 │   └── conftest.py        # Pytest fixtures
