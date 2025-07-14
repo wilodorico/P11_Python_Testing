@@ -4,9 +4,9 @@ from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 
-from repositories.club_json_repository import ClubJsonRepository
-from repositories.competition_json_repository import CompetitionJsonRepository
-from repositories.reservation_json_repository import ReservationJsonRepository
+from adapters.club_json_repository import ClubJsonRepository
+from adapters.competition_json_repository import CompetitionJsonRepository
+from adapters.reservation_json_repository import ReservationJsonRepository
 from usecases.reservation_place import ReservePlaceUseCase
 
 load_dotenv()  # Load environment variables from .env file
