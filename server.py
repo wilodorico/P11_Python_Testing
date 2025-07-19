@@ -32,6 +32,7 @@ def index():
 
 @app.route("/showSummary", methods=["GET", "POST"])
 def show_summary():
+    """Display the summary page where clubs can log in and view their competitions."""
     club_repository.reload()
     competition_repository.reload()
     date_now = datetime.now()
@@ -66,6 +67,7 @@ def show_summary():
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
+    """Render the booking page for a specific competition and club."""
     club_repository.reload()
     competition_repository.reload()
     found_club = club_repository.find_by_name(club)
@@ -80,6 +82,7 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
+    """Handle the reservation of places for a competition."""
     club_repository.reload()
     competition_repository.reload()
     reservation_repository.reload()
@@ -115,6 +118,7 @@ def purchase_places():
 
 @app.route("/points-dashboard")
 def points_dashboard():
+    """Render the points dashboard for clubs to view their points."""
     club_repository.reload()
     return render_template("points_dashboard.html", clubs=club_repository.all())
 
