@@ -21,6 +21,14 @@ repositories, and use cases.
 
 ## 🏗️ Project Structure
 
+This project follows **Clean Architecture** principles, which separates the application into distinct layers with clear dependencies flowing inward. This architecture ensures better maintainability, testability, and independence from external frameworks and databases.
+
+### Clean Architecture Benefits:
+- **Independence**: Business logic is isolated from external concerns (UI, database, frameworks)
+- **Testability**: Each layer can be tested independently with mock implementations
+- **Flexibility**: Easy to change external dependencies without affecting business rules
+- **Maintainability**: Clear separation of concerns makes the code easier to understand and modify
+
 ```
 ├── entities/              # Domain models (Club, Competition, Reservation)
 ├── adapters/              # JSON data access implementations and in memory repository for tests
